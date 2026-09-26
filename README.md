@@ -17,15 +17,28 @@ Download the latest version of **MessFlow** for Android.
 ---
 ## 📱 App Screenshots
 
-<p align="center">
-  <img src="./screenshots/dashboard.png" width="220" alt="MessFlow Dashboard">
-  <img src="./screenshots/settings-admin.png" width="220" alt="Settings & Admin">
-</p>
-
-<p align="center">
-  <img src="./screenshots/login.png" width="220" alt="MessFlow Login">
-  <img src="./screenshots/expense-meal-chart.png" width="220" alt="Mess Expense & Meal Chart">
-</p>
+<table>
+  <tr>
+    <td align="center">
+      <b>🏠 Dashboard</b><br>
+      <img src="./screenshots/dashboard.png" width="280">
+    </td>
+    <td align="center">
+      <b>⚙️ Settings & Admin</b><br>
+      <img src="./screenshots/settings-admin.png" width="280">
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>🔐 Login</b><br>
+      <img src="./screenshots/login.png" width="280">
+    </td>
+    <td align="center">
+      <b>📊 Expense & Meal Chart</b><br>
+      <img src="./screenshots/expense-meal-chart.png" width="280">
+    </td>
+  </tr>
+</table>
 
 ## 🌟 Key Features & Modules
 
