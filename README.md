@@ -1,3 +1,13 @@
+<p align="center">
+  <img src="screenshots/messflow-logo.png" width="140" alt="MessFlow Logo">
+</p>
+
+<h1 align="center">🚀 MessFlow</h1>
+
+<p align="center">
+  <strong>Smart Mess Management Application</strong>
+</p>
+
 # 🚀 MessFlow — Smart Mess Management Application
 
 **MessFlow** is a modern, feature-rich **Flutter-based mobile application** designed to simplify and automate day-to-day mess management operations.
