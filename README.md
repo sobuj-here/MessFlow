@@ -9,13 +9,23 @@ It eliminates the hassle of manual calculations by providing a centralized platf
 
 Download the latest version of **MessFlow** for Android.
 
-[![Download MessFlow](https://img.shields.io/badge/Download-MessFlow_APK-brightgreen?style=for-the-badge&logo=android)](YOUR-DOWNLOAD-LINK)
+[![Download MessFlow](https://img.shields.io/badge/Download-MessFlow_APK-brightgreen?style=for-the-badge&logo=android)](https://drive.google.com/file/d/1zd0uhJgLQJU1cULcRkK0DxfKsrOZITUa/view?usp=drivesdk)
 
 > [!NOTE]
 > Download and install the latest APK to access the newest features and improvements.
 
 ---
+<h2>📱 App Screenshots</h2>
 
+<p align="center">
+  <img src="screenshots/dashboard.png" width="220">
+  <img src="screenshots/settings-admin.png" width="220">
+</p>
+
+<p align="center">
+  <img src="screenshots/login.png" width="220">
+  <img src="screenshots/expense-meal-chart.png" width="220">
+</p>
 
 ## 🌟 Key Features & Modules
 
@@ -85,11 +95,6 @@ Download the latest version of **MessFlow** for Android.
 
 ---
 
-## 📱 App Screenshots
-
-*Screenshots will be added here.*
-
----
 
 ## 🎯 Project Goal
 
