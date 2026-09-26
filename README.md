@@ -8,7 +8,7 @@
   <strong>Smart Mess Management Application</strong>
 </p>
 
-# 🚀 MessFlow — Smart Mess Management Application
+## 🚀 About MessFlow
 
 **MessFlow** is a modern, feature-rich **Flutter-based mobile application** designed to simplify and automate day-to-day mess management operations.
 
