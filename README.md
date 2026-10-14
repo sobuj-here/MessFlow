@@ -19,7 +19,7 @@ It eliminates the hassle of manual calculations by providing a centralized platf
 
 Download the latest version of **MessFlow** for Android.
 
-[![Download MessFlow](https://img.shields.io/badge/Download-MessFlow_APK-brightgreen?style=for-the-badge&logo=android)](https://drive.google.com/file/d/1zd0uhJgLQJU1cULcRkK0DxfKsrOZITUa/view?usp=drivesdk)
+[![Download MessFlow](https://img.shields.io/badge/Download-MessFlow_APK-brightgreen?style=for-the-badge&logo=android)](https://drive.google.com/file/d/1VY5QRbaH3UWDTQGPcwUf2llWIDw79Hoc/view?usp=drivesdk)
 
 > [!NOTE]
 > Download and install the latest APK to access the newest features and improvements.
