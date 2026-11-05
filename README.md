@@ -1,70 +1,137 @@
-<div align="center">
+<p align="center">
+  <img src="screenshots/messflow-logo.png" width="140" alt="MessFlow Logo">
+</p>
 
-# 🏢 MessFlow
+<h1 align="center">🚀 MessFlow</h1>
 
-**The Ultimate Smart Mess & Hostel Management Ecosystem for Students and Bachelors**
+<p align="center">
+  <strong>Smart Mess & Hostel Management Application</strong>
+</p>
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.24+-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.5+-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
-[![Firebase](https://img.shields.io/badge/Firebase-Firestore-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
-[![Version](https://img.shields.io/badge/Release-v2.1.2-brightgreen?style=for-the-badge)](https://github.com/sobuj-here/MessFlow/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+<p align="center">
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.24+-02569B.svg?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter"></a>
+  <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.5+-0175C2.svg?style=for-the-badge&logo=dart&logoColor=white" alt="Dart"></a>
+  <a href="https://firebase.google.com"><img src="https://img.shields.io/badge/Firebase-Firestore-FFCA28.svg?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase"></a>
+  <a href="https://github.com/sobuj-here/MessFlow/releases"><img src="https://img.shields.io/badge/Release-v2.1.2-brightgreen.svg?style=for-the-badge&logo=android" alt="Release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License"></a>
+</p>
 
-*Track daily meals, manage bazaar schedules, automate meal rates, calculate room rent, handle extra utilities, and archive fiscal months with single-click 24-hour restore.*
+<p align="center">
+  <em>An all-in-one digital solution for students and bachelor messes to track daily meals, manage bazaar expenses, automate meal rate calculations, persist room rents, handle utility bills, and archive monthly financial records with a 24-hour restore window.</em>
+</p>
 
 ---
 
-</div>
+## 📥 Download MessFlow
 
-## 🌟 Key Highlights & Features
+Download the latest production release of **MessFlow** for Android:
 
-### 🍽️ 1. Daily Meal Tracker & Live Meal Rate
-- **Automated Calculations:** Instant calculation of daily individual counts (Breakfast, Lunch, Dinner) and total mess meals.
-- **Dynamic Meal Rate Engine:** Live meal rate recalculated continuously: `(Total Approved Bazaar Cost) ÷ (Total Meals)`.
-- **Full Month Matrix:** Complete Day 1 to 31 meal chart breakdown for every member.
+<p align="center">
+  <a href="https://github.com/sobuj-here/MessFlow/releases/download/v2.1.2/MessFlow-v2.1.2.apk">
+    <img src="https://img.shields.io/badge/Download-MessFlow_v2.1.2_APK-brightgreen?style=for-the-badge&logo=android" alt="Download MessFlow APK">
+  </a>
+</p>
 
-### 🛒 2. Bazaar Management & Duties
-- **Duty Scheduling:** Manager can assign daily shopping duties to members with estimated budgets and custom item checklists.
-- **Refund / Surplus Adjustment:** Support for negative amounts (`-৳500`) when shopping money is saved or returned.
-- **Edit Audit & Alerts:** Any modified bazaar entry displays an `[EDITED]` badge and notifies all members automatically.
+> [!NOTE]
+> Download and install `MessFlow-v2.1.2.apk` directly to access the newest features, performance optimizations, and bug fixes.
 
-### 🏠 3. Room Rent & Utility Bills Sheet
+---
+
+## 📱 App Screenshots
+
+<table>
+  <tr>
+    <td align="center">
+      <b>🏠 Dashboard</b><br>
+      <img src="./screenshots/dashboard.png" width="280" alt="Dashboard">
+    </td>
+    <td align="center">
+      <b>⚙️ Settings & Admin</b><br>
+      <img src="./screenshots/settings-admin.png" width="280" alt="Settings & Admin">
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <b>🔐 Login</b><br>
+      <img src="./screenshots/login.png" width="280" alt="Login">
+    </td>
+    <td align="center">
+      <b>📊 Expense & Meal Chart</b><br>
+      <img src="./screenshots/expense-meal-chart.png" width="280" alt="Expense & Meal Chart">
+    </td>
+  </tr>
+</table>
+
+---
+
+## 🌟 Key Features & Modules
+
+### 🏠 1. Live Mess Sheet & Real-Time Dashboard
+- Real-time overview of **total bazaar costs, approved bazaar lists, total meals, and dynamic meal-rate calculations**.
+- Dynamic meal rate recalculation engine: `(Total Approved Bazaar Cost) ÷ (Total Meals)`.
+- Summary cards for monitoring overall mess financial status at a glance.
+
+### 🍲 2. Daily Meal Management
+- Seamless tracking of **breakfast, lunch, and dinner** for individual members.
+- Full Day 1 to 31 matrix meal chart breakdown.
+- Detailed monthly meal charts and daily meal-entry records with historical access.
+
+### 🛒 3. Bazaar Management & Expense Adjustments
+- **Duty Scheduling:** Manager can assign daily shopping duties to members with estimated budgets and checklists.
+- **Negative Expense Adjustment:** Support for negative amounts (`-৳500`) when shopping money is saved, refunded, or returned.
+- **Audit Badge & Alerts:** Any modified bazaar entry displays an `[EDITED]` badge and notifies members automatically.
+
+### 🏢 4. Permanent Room Rent & Utility Bills Sheet
 - **Permanent Rent Persistence:** Fixed room rent per member is saved permanently across months—no need to re-enter monthly.
 - **Dynamic Status Badges:** Visual badges showing **Paid (Green)**, **Partial Due (Yellow)**, or **Unpaid (Red)**.
 - **Shared Utility Bills Breakdown:** Itemized utility records for House Rent, Maid, Gas, WiFi, and Electricity.
 
-### 💳 4. Payments, Funds & Anti-Duplicate Protection
-- **Multi-Method Support:** Built-in support for bKash, Nagad, Rocket, Upay, Bank Transfer, and Cash in Hand.
-- **Double-Click Prevention:** Anti-spam debouncing and database-level guards prevent accidental double deductions.
-- **Manager Balance Tracker:** Real-time visibility into the current meal fund balance and cash reserve.
+### 💳 5. Payments, Funds & Anti-Duplicate Protection
+- **Multi-Method Support:** Support for bKash, Nagad, Rocket, Upay, Bank Transfer, and Cash.
+- **Double-Click Protection:** Debounce guards and database-level checks prevent accidental duplicate payments.
+- **Automated Balances:** Clearly distinguishes between **Refunds and Dues** for each member.
 
-### 🔒 5. Professional Month-End Fiscal Close (with 24h Undo)
-- **Executive 2x2 Overview:** Clean metrics cards for Bazaar, Total Meals, Meal Rate, and Utility Bills before finalizing.
-- **Session Chooser:** Choice cards to cleanly archive either the Previous Month or Current Month.
-- **24-Hour Safety Grace:** Any closed month can be restored back to active state within 24 hours with a single click.
+### 🔒 6. Professional Month-End Fiscal Close (with 24-Hour Undo)
+- **Executive Summary:** Clean metrics review for Bazaar, Total Meals, Meal Rate, and Utility Bills before finalizing.
+- **24-Hour Safety Grace Window:** Any closed month can be restored back to the active state within 24 hours with a single click in Settings or History.
+- **Secure Archive:** Securely archives completed months in Firebase Firestore with detailed tabular records.
 
-### 🌐 6. Native Multi-Language Localization
-- Seamlessly localized with `easy_localization` across **5 languages**:
+### 🌐 7. Native Multi-Language Support
+- Localized using `easy_localization` across **5 international languages**:
   - 🇺🇸 **English**
-  - 🇧🇩 **বাংলা (Bangla)**
+  - 🇧🇩 **বাংলা (Bengali)**
   - 🇮🇳 **हिन्दी (Hindi)**
   - 🇸🇦 **العربية (Arabic)**
   - 🇪🇸 **Español (Spanish)**
-- Switch languages on-the-fly inside Settings with instantaneous full-widget re-rendering.
+- Switch languages on-the-fly inside Settings with instantaneous full-app re-rendering.
 
-### 💬 7. Group Chat & System Push Notifications
-- Integrated group chat for roommates with image and document sharing.
-- Android system notifications categorized by specific notification channels (Bazaar, Meals, Payments, Rent, Notices).
-- Duplicate notification suppression ensures no spam notifications.
+### 🛡️ 8. Role-Based Access Control (RBAC) & Group Chat
+- Secure administrative and managerial controls for authorized **Admins and Managers**.
+- Protected operations include closing monthly records, resetting data, and managing member roles.
+- Integrated group chat for roommates with instant system push notifications.
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+## 🛠️ Technology Stack
+
+| Category | Technology |
+|---|---|
+| 📱 **Frontend Framework** | Flutter (Dart 3.5+) |
+| 🔥 **Backend & Database** | Firebase Firestore (Offline Persistence Enabled) |
+| 🔐 **Authentication** | Firebase Authentication (Email/Password & Google Sign-In) |
+| ⚡ **State Management** | ValueNotifier & ListenableBuilder |
+| 🌐 **Localization** | easy_localization (English, বাংলা, हिन्दी, العربية, Español) |
+| 🔔 **Notifications** | Flutter Local Notifications with Custom Channels |
+| ☁️ **Media Cloud** | Cloudinary API |
+
+---
+
+## 📂 Project Structure
 
 ```
 lib/
-├── controllers/          # Application state controllers (Theme, Language)
-├── screens/              # UI screens (Home, Meals, Bazaar, Rent, Chat, History)
+├── controllers/          # State controllers (Theme, Language, App State)
+├── screens/              # UI screens & dialogs
 │   ├── home_screen.dart
 │   ├── meal_screen.dart
 │   ├── add_bazaar_screen.dart
@@ -73,28 +140,21 @@ lib/
 │   ├── history_screen.dart
 │   ├── settings_screen.dart
 │   └── group_chat_screen.dart
-├── services/             # Core business logic & external APIs
+├── services/             # Business logic & Firebase services
 │   ├── auth_service.dart
 │   ├── auto_notification_service.dart
 │   └── permission_service.dart
-└── main.dart             # Entrypoint & localization initialization
+├── translations/         # Localization JSON files (en, bn, hi, ar, es)
+└── main.dart             # Application entrypoint
 ```
-
-- **Framework:** Flutter 3.24+ (Dart 3.5+)
-- **State Management:** Reactive ValueNotifiers & ListenableBuilder
-- **Backend / Database:** Cloud Firestore (Offline Persistence Enabled)
-- **Authentication:** Firebase Auth (Email/Password & Google Sign-In)
-- **Local Storage:** SharedPreferences
-- **Localization:** EasyLocalization (JSON-based)
-- **Media Uploads:** Cloudinary API
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Setup & Installation
 
 ### 1. Prerequisites
 - [Flutter SDK](https://docs.flutter.dev/get-started/install) (v3.24 or higher)
-- [Android Studio](https://developer.android.com/studio) or VS Code
+- [Android Studio](https://developer.android.com/studio) / VS Code
 - Java 17 LTS
 
 ### 2. Clone the Repository
@@ -103,63 +163,32 @@ git clone https://github.com/sobuj-here/MessFlow.git
 cd MessFlow
 ```
 
-### 3. Setup Firebase
-> [!IMPORTANT]
-> For security reasons, production Firebase credentials (`google-services.json`) are excluded from this repository.
+### 3. Firebase Configuration
+For security reasons, private Firebase credentials are not tracked in this repository.
+1. Create a project in the [Firebase Console](https://console.firebase.google.com/).
+2. Enable **Firestore Database** and **Firebase Authentication**.
+3. Copy `android/app/google-services.json.example` to `android/app/google-services.json` and replace the placeholder fields with your project credentials.
 
-1. Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
-2. Enable **Authentication** (Email/Password & Google), **Cloud Firestore**, and **Cloud Storage**.
-3. Register your Android app with package name: `com.example.messmate` (or your chosen ID).
-4. Download your `google-services.json` file.
-5. Place it inside the `android/app/` directory:
-   ```bash
-   cp path/to/your/google-services.json android/app/google-services.json
-   ```
-   *(See `android/app/google-services.json.example` for the required structure)*
-
-### 4. Install Dependencies
+### 4. Install Dependencies & Run
 ```bash
 flutter pub get
-```
-
-### 5. Run the Application
-```bash
-# Debug Mode
 flutter run
-
-# Release Build
-flutter build apk --release --no-tree-shake-icons --android-skip-build-dependency-validation
 ```
 
-The compiled APK will be generated at:
-`build/app/outputs/flutter-apk/app-release.apk`
-
----
-
-## 📱 Releases & APK Download
-
-You can download the pre-compiled, production-ready APK directly from the GitHub Releases page:
-👉 **[Download Latest APK (v2.1.2)](https://github.com/sobuj-here/MessFlow/releases)**
-
----
-
-## 🤝 Contributing
-
-Contributions, bug reports, and feature suggestions are always welcome!
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+### 5. Build Release APK
+```bash
+flutter build apk --release
+```
+The compiled APK will be generated at `build/app/outputs/flutter-apk/app-release.apk`.
 
 ---
 
 ## 📄 License
 
-Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-<div align="center">
-  <sub>Developed with ❤️ for bachelor and student messes worldwide.</sub>
-</div>
+<p align="center">
+  Made with ❤️ for smart hostel and mess management.
+</p>
