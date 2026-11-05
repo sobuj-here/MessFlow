@@ -1,0 +1,58 @@
+name: messflow
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 2.1.2+5
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  easy_localization: ^3.0.7  
+  math_expressions: ^2.7.0
+  intl: ^0.20.3
+  flutter_local_notifications: ^18.0.1
+
+  # Firebase Stable Versions
+  firebase_core: 3.12.1
+  firebase_auth: 5.5.1
+  cloud_firestore: 5.6.5
+  firebase_storage: 12.4.4
+  google_sign_in: ^6.2.2
+
+  # Essential App Packages
+  shared_preferences: ^2.3.5
+  image_picker: ^1.1.2
+  qr_flutter: ^4.1.0
+
+  http: ^1.2.0
+  file_picker: ^8.1.7
+
+  # PDF & File Management Packages (Dio & Permission Handler Included)
+  pdf: ^3.10.4
+  path_provider: ^2.1.2
+  open_file: ^3.3.2
+  dio: ^5.4.0
+  permission_handler: ^11.3.0
+
+  cupertino_icons: ^1.0.8
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/app_logo.png"
+  min_sdk_android: 21
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/translations/
