@@ -10,7 +10,7 @@ class AdminBillSheetScreen extends StatefulWidget {
 }
 
 class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
-  // Expense Controllers matching your Google Sheet values
+  
   final TextEditingController _rentCtrl = TextEditingController(text: "18000");
   final TextEditingController _gasCtrl = TextEditingController(text: "1000");
   final TextEditingController _electricCtrl = TextEditingController(text: "1600");
@@ -20,7 +20,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
   String _selectedMonth = "October 2026";
   String _activeFormula = '=ROUND(2030+(SUM(\$B\$5:\$B\$8)/9))';
 
-  // Expense statuses
+  
   final Map<String, String> _expenseStatus = {
     'House Rent': 'Unpaid',
     'Gas Bill': 'Unpaid',
@@ -29,7 +29,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
     'Garbage Collection Fee': 'Unpaid',
   };
 
-  // Member payment statuses
+  
   final Map<String, String> _memberStatus = {};
 
   double get utilitiesSum {
@@ -112,7 +112,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // 1. Top Section Header (Soft Green Header)
+                  
                   Container(
                     width: double.infinity,
                     color: const Color(0xFFC8E6C9),
@@ -129,7 +129,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
                     ),
                   ),
 
-                  // 2. Month Selector Row (Pink Strip)
+                  
                   Container(
                     width: double.infinity,
                     color: const Color(0xFFFFCDD2),
@@ -151,7 +151,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
                     ),
                   ),
 
-                  // 3. Upper Expense Table
+                  
                   Table(
                     border: TableBorder.all(color: Colors.grey.shade400, width: 0.8),
                     columnWidths: const {
@@ -191,7 +191,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
 
                   const SizedBox(height: 12),
 
-                  // 4. Payment Section Header (Soft Green Header)
+                  
                   Container(
                     width: double.infinity,
                     color: const Color(0xFFC8E6C9),
@@ -208,7 +208,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
                     ),
                   ),
 
-                  // 5. Lower Members Table
+                  
                   StreamBuilder<QuerySnapshot>(
                     stream: FirebaseFirestore.instance
                         .collection('users')
@@ -246,7 +246,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
                     },
                   ),
 
-                  // 6. Note Box (Pink/Purple Background Note)
+                  
                   Container(
                     width: double.infinity,
                     color: const Color(0xFFFFEBEE),
@@ -263,7 +263,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
             ),
           ),
 
-          // 7. Formula Bar (fx) matching Excel/Sheets
+          
           Container(
             color: const Color(0xFF1E1E1E),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -301,7 +301,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
     );
   }
 
-  // Header row builder
+  
   TableRow _buildHeaderRow(List<String> titles) {
     return TableRow(
       decoration: const BoxDecoration(color: Color(0xFFD1C4E9)),
@@ -318,7 +318,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
     );
   }
 
-  // Input row for expenses
+  
   TableRow _buildExpenseInputRow(String title, TextEditingController controller, String cellRef) {
     final status = _expenseStatus[title] ?? 'Unpaid';
     return TableRow(
@@ -348,7 +348,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
     );
   }
 
-  // Member row
+  
   TableRow _buildMemberRow(String uid, String name, int payable, double seat, String status, int totalMembers) {
     return TableRow(
       children: [
@@ -374,7 +374,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
     );
   }
 
-  // Dropdown Pill matching the Red/Green buttons in your screenshot
+  
   Widget _buildStatusCapsule(String status, Function(String) onChanged) {
     final bool isPaid = status == 'Paid';
     return Padding(
@@ -409,7 +409,7 @@ class _AdminBillSheetScreenState extends State<AdminBillSheetScreen> {
     );
   }
 
-  // Default rows if Firestore has no member docs yet (matches your exact screenshot)
+  
   List<TableRow> _buildFallbackMembers(double sharedUtility) {
     final dummyData = [
       {'name': 'Jahidur Roshid Jisan', 'seat': 2030.0, 'status': 'Unpaid'},

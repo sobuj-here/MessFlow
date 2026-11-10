@@ -6,7 +6,7 @@ class LanguageService {
   static bool get isBangla => languageNotifier.value == 'bn';
 
   static Future<void> init() async {
-    // ডিফল্ট ইংরেজি হিসেবে শুরু হবে
+    
     languageNotifier.value = 'en';
   }
 

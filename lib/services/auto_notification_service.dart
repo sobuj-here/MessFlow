@@ -1,20 +1,33 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../main.dart'; // flutterLocalNotificationsPlugin ব্যবহারের জন্য
+import 'package:firebase_messaging/firebase_messaging.dart';
+import '../main.dart';
+import '../screens/group_chat_screen.dart';
+import '../screens/assign_bazaar_screen.dart';
+import '../screens/add_bazaar_screen.dart';
+import '../screens/payment_screen.dart';
+import '../screens/meal_chart_screen.dart';
+import '../screens/room_rent_sheet_screen.dart';
+import '../screens/notifications_screen.dart';
 
 class AutoNotificationService {
   static final FirebaseFirestore _db = FirebaseFirestore.instance;
   static bool _isListening = false;
   static String? _currentMessId;
+  static String? currentUserRole;
 
-  // 🌟 ডুপ্লিকেট নোটিফিকেশন আসা স্থায়ীভাবে বন্ধ করতে ট্র্যাকিং সেট
+  
+  static bool isChatScreenActive = false;
+
+  
   static final Set<String> _shownNotificationIds = {};
   static final Set<String> _shownChatIds = {};
   static bool _isFirstNotificationSnap = true;
   static bool _isFirstChatSnap = true;
 
-  // 🌟 পরপর দ্রুত একই নোটিফিকেশন দুবার সেন্ড হওয়া বন্ধ করতে ডিবউন্স
+  
   static String? _lastSentSig;
   static int _lastSentTime = 0;
 
@@ -29,7 +42,30 @@ class AutoNotificationService {
     final messRef = _db.collection('messes').doc(messId);
     final DateTime sessionStartTime = DateTime.now();
 
-    // 🌟 নতুন নোটিফিকেশন আসলে ডিভাইসের স্ট্যাটাসবারে সিস্টেম নোটিফিকেশন দেখানোর অপটিমাইজড লিসেনার
+    
+    try {
+      FirebaseMessaging.instance.subscribeToTopic('mess_$messId');
+      if (currentUid != null) {
+        FirebaseMessaging.instance.subscribeToTopic('user_$currentUid');
+      }
+    } catch (_) {}
+
+    
+    if (currentUid != null) {
+      messRef.collection('members').doc(currentUid).get().then((doc) {
+        if (doc.exists) {
+          currentUserRole = doc.data()?['role']?.toString().toLowerCase();
+        }
+      }).catchError((_) {});
+
+      _db.collection('users').doc(currentUid).get().then((doc) {
+        if (doc.exists && currentUserRole == null) {
+          currentUserRole = doc.data()?['role']?.toString().toLowerCase();
+        }
+      }).catchError((_) {});
+    }
+
+    
     messRef
         .collection('notifications')
         .orderBy('createdAt', descending: true)
@@ -61,20 +97,46 @@ class AutoNotificationService {
 
           final List readBy = data['readBy'] ?? [];
           final String senderUid = data['senderUid'] ?? '';
+          final String? targetUid = data['targetUid']?.toString();
+          final String? targetRole = data['targetRole']?.toString().toLowerCase();
 
-          // যদি বর্তমান ইউজার ইতিমধ্যে পড়ে না থাকে এবং নিজে না পাঠিয়ে থাকে
-          if (currentUid != null && !readBy.contains(currentUid) && senderUid != currentUid) {
-            _showLocalNotification(
-              title: data['title'] ?? 'MessFlow Notification',
-              body: data['body'] ?? '',
-              type: data['type'] ?? 'notice',
-            );
+          
+          if (currentUid != null && senderUid.isNotEmpty && senderUid == currentUid) {
+            continue;
           }
+
+          
+          if (currentUid != null && readBy.contains(currentUid)) {
+            continue;
+          }
+
+          
+          if (targetUid != null && targetUid.isNotEmpty && targetUid != currentUid) {
+            continue;
+          }
+
+          
+          if (targetRole != null && targetRole.isNotEmpty) {
+            final role = currentUserRole ?? 'member';
+            if (targetRole == 'manager' && !(role == 'manager' || role == 'admin')) {
+              continue;
+            }
+            if (targetRole == 'admin' && role != 'admin') {
+              continue;
+            }
+          }
+
+          _showLocalNotification(
+            title: data['title'] ?? 'MessFlow Notification',
+            body: data['body'] ?? '',
+            type: data['type'] ?? 'notice',
+            messId: messId,
+          );
         }
       }
     });
 
-    // 🌟 মেসেজের জন্য বাইরে সিস্টেম নোটিফিকেশন লিসেনার
+    
     messRef
         .collection('group_chats')
         .orderBy('timestamp', descending: true)
@@ -98,6 +160,11 @@ class AutoNotificationService {
           final data = change.doc.data();
           if (data == null) continue;
 
+          
+          if (isChatScreenActive) {
+            continue;
+          }
+
           final Timestamp? timestamp = data['timestamp'] as Timestamp?;
           if (timestamp != null &&
               timestamp.toDate().isBefore(sessionStartTime.subtract(const Duration(minutes: 1)))) {
@@ -117,6 +184,7 @@ class AutoNotificationService {
               title: '$senderName (Group Chat)',
               body: body,
               type: 'chat',
+              messId: messId,
             );
           }
         }
@@ -124,18 +192,19 @@ class AutoNotificationService {
     });
   }
 
-  // 🌟 যে কোনো স্ক্রিন থেকে সরাসরি সেন্ট্রাল নোটিফিকেশন তৈরি করার মেথড (ডুপ্লিকেট প্রতিরোধসহ)
+  
   static Future<void> sendNotification({
     required String messId,
     required String title,
     required String body,
     required String type,
     String? senderUid,
+    String? targetUid,
+    String? targetRole,
   }) async {
     if (messId.isEmpty) return;
 
-    // একই নোটিফিকেশন পরপর ২ সেকেন্ডের মধ্যে এলে ইগনোর করা হবে
-    final sig = '$messId|$title|$body|$type';
+    final sig = '$messId|$title|$body|$type|$targetUid|$targetRole';
     final nowMs = DateTime.now().millisecondsSinceEpoch;
     if (_lastSentSig == sig && (nowMs - _lastSentTime) < 2000) {
       return;
@@ -154,17 +223,21 @@ class AutoNotificationService {
         'body': body,
         'type': type,
         'senderUid': uid ?? '',
+        'targetUid': targetUid,
+        'targetRole': targetRole,
         'createdAt': FieldValue.serverTimestamp(),
         'readBy': uid != null ? [uid] : [],
+        'clearedBy': [],
       });
     } catch (_) {}
   }
 
-  // 🌟 ডিভাইসের স্ট্যাটাসবারে রিয়েল নোটিফিকেশন প্রদর্শন করার মেথড
+  
   static Future<void> _showLocalNotification({
     required String title,
     required String body,
     required String type,
+    String? messId,
   }) async {
     String channelId = 'mess_notice_channel';
     String channelName = 'Mess Notices';
@@ -193,9 +266,11 @@ class AutoNotificationService {
         AndroidNotificationDetails(
       channelId,
       channelName,
-      importance: Importance.high,
+      importance: Importance.max,
       priority: Priority.high,
       showWhen: true,
+      enableVibration: true,
+      playSound: true,
       icon: '@mipmap/ic_launcher',
     );
 
@@ -203,13 +278,49 @@ class AutoNotificationService {
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
     final int notifId = DateTime.now().millisecondsSinceEpoch.remainder(100000);
+    final String payload = '${messId ?? _currentMessId ?? ""}|$type';
+
     try {
       await flutterLocalNotificationsPlugin.show(
         notifId,
         title,
         body,
         platformChannelSpecifics,
+        payload: payload,
       );
     } catch (_) {}
+  }
+
+  
+  static void handleNotificationTap(String messId, String type, NavigatorState? navigator) {
+    if (navigator == null || messId.isEmpty) return;
+
+    Widget targetScreen;
+    if (type.contains('chat')) {
+      targetScreen = GroupChatScreen(messId: messId);
+    } else if (type.contains('duty') || type.contains('assign')) {
+      targetScreen = AssignBazaarScreen(messId: messId, isManager: false);
+    } else if (type.contains('bazaar')) {
+      targetScreen = AddBazaarScreen(messId: messId, isAdmin: false, isManager: false);
+    } else if (type.contains('payment')) {
+      targetScreen = PaymentScreen(messId: messId, isAdmin: false, isManager: false);
+    } else if (type.contains('meal')) {
+      targetScreen = FullMonthMealChartScreen(messId: messId);
+    } else if (type.contains('rent')) {
+      targetScreen = RoomRentSheetScreen(messId: messId, isAdmin: false);
+    } else {
+      targetScreen = NotificationsScreen(messId: messId);
+    }
+
+    navigator.push(MaterialPageRoute(builder: (_) => targetScreen));
+  }
+
+  
+  static Future<void> showTestNotification() async {
+    await _showLocalNotification(
+      title: '🔔 MessFlow Test Notification',
+      body: 'Your notification and alert system is working properly.',
+      type: 'notice',
+    );
   }
 }

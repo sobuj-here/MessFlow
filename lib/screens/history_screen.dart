@@ -229,7 +229,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             final double mealRate = _parseNum(data['mealRate']);
             final double totalRent = _parseNum(data['totalRent']);
 
-            // 1. Calculate Days in Month for Meal Chart Grid
+            
             int daysInMonth = 31;
             try {
               if (monthName.contains('-')) {
@@ -242,7 +242,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               daysInMonth = 31;
             }
 
-            // 2. Build Daily Meals Matrix (Days 1 to daysInMonth)
+            
             Map<String, Map<int, double>> memberDailyMeals = {
               for (var uid in memberUids) uid: {}
             };
@@ -280,7 +280,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               }
             });
 
-            // 3. Shared Expenses (Extra Cost) Calculation
+            
             double totalExtraExpenses = 0.0;
             backupSharedExpenses.forEach((key, val) {
               if (val is Map) {
@@ -292,7 +292,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
             final double extraPerPerson = memberUids.isNotEmpty ? (totalExtraExpenses / memberUids.length) : 0.0;
 
-            // 4. Member Deposit Calculation
+            
             Map<String, double> memberDeposits = {for (var uid in memberUids) uid: 0.0};
             backupPayments.forEach((key, val) {
               if (val is Map) {
@@ -339,7 +339,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             final monthKey = data['month']?.toString() ?? '';
             final monthFullName = data['monthFullName']?.toString() ?? '';
 
-            // 5. Room Rent Report from backupSeatRents
+            
             final List<Map<String, dynamic>> roomRentReport = memberUids.map((uid) {
               final mName = memberNames[uid] ?? 'Member';
               double payable = 0.0;
@@ -379,7 +379,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               }
             });
 
-            // 6. Bazaar Records List
+            
             final List<Map<String, dynamic>> bazaarsList = [];
             backupBazaars.forEach((key, val) {
               if (val is Map) {
@@ -440,7 +440,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          // Tab 1: Expense Sheet
+                          
                           SingleChildScrollView(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -502,7 +502,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             ),
                           ),
 
-                          // Tab 2: Bazaar Records List
+                          
                           bazaarsList.isEmpty
                               ? Center(
                                   child: Text('No bazaar records found for this month'.tr(), style: const TextStyle(color: Colors.grey)),
@@ -636,7 +636,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   },
                                 ),
 
-                          // Tab 3: Structured Day-by-Day Meal Chart
+                          
                           SingleChildScrollView(
                             child: Card(
                               elevation: 1,
@@ -725,7 +725,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             ),
                           ),
 
-                          // Tab 4: Room Rent & Utilities
+                          
                           SingleChildScrollView(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,

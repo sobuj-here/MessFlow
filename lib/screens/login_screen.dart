@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         if (!mounted) return;
 
-        // 🌟 Safe Routing Logic: Prothom e phone check korbe, tarpor messId ebong pending status
+        
         if (phone.isEmpty) {
           Navigator.pushReplacement(
             context,
@@ -81,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
             MaterialPageRoute(builder: (context) => const WaitingApprovalScreen()),
           );
         } else {
-          // 🌟 MessId thakle ebong active holeiHomeScreen-e pathabe
+          
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomeScreen(messId: messId)),

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'database_service_interface.dart';
+import 'auto_notification_service.dart';
 
 class FirebaseDatabaseService implements DatabaseServiceInterface {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -497,11 +498,12 @@ class FirebaseDatabaseService implements DatabaseServiceInterface {
   }) async {
     if (messId.trim().isEmpty) return;
 
-    await _firestore.collection('messes').doc(messId).collection('notifications').add({
-      'title': title,
-      'body': body,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    await AutoNotificationService.sendNotification(
+      messId: messId,
+      title: title,
+      body: body,
+      type: 'notice',
+    );
   }
 
   @override

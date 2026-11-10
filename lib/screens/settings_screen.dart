@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
+import '../services/auto_notification_service.dart';
 import '../controllers/app_settings_controller.dart';
 import '../services/auth_service.dart';
 import 'login_screen.dart';
@@ -39,7 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     final messRef = FirebaseFirestore.instance.collection('messes').doc(messId);
 
-    // Smooth loading indicator during data retrieval
+    
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -71,7 +73,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final monthlyBillsSnap = await messRef.collection('monthly_bills').get();
 
     if (context.mounted) {
-      Navigator.pop(context); // Dismiss loading dialog
+      Navigator.pop(context);
     }
 
     double totalBazaar = 0;
@@ -145,7 +147,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 4),
-                  // Month selection choice cards
+                  
                   Row(
                     children: [
                       Expanded(
@@ -271,7 +273,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Financial Overview Grid
+                  
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -382,7 +384,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Important Notice Banner
+                  
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
@@ -454,7 +456,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     if (confirm != true) return;
 
-    // Show Progress Dialog while archiving safely
+    
     if (context.mounted) {
       showDialog(
         context: context,
@@ -519,8 +521,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     for (var doc in sharedExpenseSnap.docs) { await doc.reference.delete(); }
     for (var doc in paymentSnap.docs) { await doc.reference.delete(); }
 
+    final currentUid = FirebaseAuth.instance.currentUser?.uid;
+    await AutoNotificationService.sendNotification(
+      messId: messId,
+      title: '🔒 Fiscal Month Closed',
+      body: 'Financial records for $selectedMonthFullName have been closed and archived.',
+      type: 'notice',
+      senderUid: currentUid,
+    );
+
     if (context.mounted) {
-      Navigator.pop(context); // Dismiss progress dialog
+      Navigator.pop(context);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -653,6 +664,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     await targetDoc.reference.delete();
+
+    final currentUid = FirebaseAuth.instance.currentUser?.uid;
+    await AutoNotificationService.sendNotification(
+      messId: messId,
+      title: '🔄 Month Restored',
+      body: 'Month records for $monthName have been restored.',
+      type: 'notice',
+      senderUid: currentUid,
+    );
 
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1415,7 +1435,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                 ),
 
-                                // 🌟 Monthly Archives & History Option for Everyone inside Mess
+                                
                                 if (messId.isNotEmpty) ...[
                                   Card(
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -1601,15 +1621,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ],
                     onChanged: (newLang) async {
                       if (newLang != null) {
-                        // ১. EasyLocalization লোকাল্লে সেট করা
+                        
                         await context.setLocale(Locale(newLang));
                         
-                        // ২. কন্ট্রোলারে সেভ করা
+                        
                         if (context.mounted) {
                           await AppSettingsController.instance.changeLanguage(context, newLang);
                         }
                         
-                        // ৩. উইজেট ট্রি সম্পূর্ণ ফোর্স রি-বিল্ড করার জন্য নেভিগেশন রি-লোড
+                        
                         if (context.mounted) {
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
@@ -1622,6 +1642,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 20),
+              const Text('Notifications & Background Activity', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey)),
+              const SizedBox(height: 8),
+
+              Card(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: ListTile(
+                  leading: const Icon(Icons.battery_charging_full_rounded, color: Color(0xFF1B5E20)),
+                  title: const Text('Allow Background Notifications', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  subtitle: const Text('Ensure notifications arrive even when app is closed (Disable Battery Restrictions / Enable Auto-start).', style: TextStyle(fontSize: 12)),
+                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                  onTap: () async {
+                    await openAppSettings();
+                  },
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              Card(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: ListTile(
+                  leading: const Icon(Icons.notifications_active_rounded, color: Colors.teal),
+                  title: const Text('Test Notification Alert', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  subtitle: const Text('Send a live test notification to verify sound, vibration, and heads-up banner.', style: TextStyle(fontSize: 12)),
+                  trailing: const Icon(Icons.send_rounded, size: 18, color: Colors.teal),
+                  onTap: () async {
+                    await AutoNotificationService.showTestNotification();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Test notification sent to your status bar!')),
+                      );
+                    }
+                  },
+                ),
+              ),
+
               const SizedBox(height: 20),
               const Text('Account', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey)).tr(),
               const SizedBox(height: 8),

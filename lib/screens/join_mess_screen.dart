@@ -111,7 +111,7 @@ class _JoinMessScreenState extends State<JoinMessScreen> {
       final messDoc = query.docs.first;
       final messId = messDoc.id;
 
-      // 🌟 সেফটি চেক: messId বা uid ফাঁকা থাকলে ফায়ারস্টোর ক্র্যাশ এড়াতে রিটার্ন করবে
+      
       if (messId.isEmpty || uid.isEmpty) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

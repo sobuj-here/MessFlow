@@ -247,7 +247,7 @@ class _AddBazaarScreenState extends State<AddBazaarScreen> {
                           return;
                         }
 
-                        // 🌟 24-hour edit restriction check for editing
+                        
                         if (isEditing && initialData != null) {
                           DateTime? createdAt;
                           if (initialData['createdAt'] is Timestamp) {
@@ -267,7 +267,7 @@ class _AddBazaarScreenState extends State<AddBazaarScreen> {
                           }
                         }
 
-                        // 🌟 ডাবল-ক্লিক প্রতিরোধ
+                        
                         setDialogState(() => isSavingBazaar = true);
 
                         try {
@@ -302,7 +302,7 @@ class _AddBazaarScreenState extends State<AddBazaarScreen> {
                               'editedBy': currentUid,
                             });
 
-                            // 🌟 বাজার এডিট করার পর নোটিফিকেশন পাঠানো
+                            
                             await AutoNotificationService.sendNotification(
                               messId: widget.messId,
                               title: '✏️ Bazaar Expense Updated',
@@ -324,7 +324,7 @@ class _AddBazaarScreenState extends State<AddBazaarScreen> {
                               'createdAt': FieldValue.serverTimestamp(),
                             });
 
-                            // 🌟 নতুন বাজার যোগ করার নোটিফিকেশন
+                            
                             await AutoNotificationService.sendNotification(
                               messId: widget.messId,
                               title: '🛒 New Bazaar Added!',
@@ -365,12 +365,29 @@ class _AddBazaarScreenState extends State<AddBazaarScreen> {
   }
 
   Future<void> _approveBazaar(String docId) async {
-    await FirebaseFirestore.instance
+    final docRef = FirebaseFirestore.instance
         .collection('messes')
         .doc(widget.messId)
         .collection('bazaars')
-        .doc(docId)
-        .update({'status': 'approved'});
+        .doc(docId);
+
+    final snap = await docRef.get();
+    final data = snap.data();
+    final submitterUid = data?['userId']?.toString();
+    final amount = data?['amount'] ?? 0;
+
+    await docRef.update({'status': 'approved'});
+
+    final currentUid = FirebaseAuth.instance.currentUser?.uid;
+    await AutoNotificationService.sendNotification(
+      messId: widget.messId,
+      title: '✅ Bazaar Expense Approved!',
+      body: 'Bazaar expense of ৳$amount has been approved by manager.',
+      type: 'bazaar_add',
+      senderUid: currentUid,
+      targetUid: (submitterUid != null && submitterUid != currentUid) ? submitterUid : null,
+    );
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Bazaar approved!')));
     }
@@ -479,7 +496,7 @@ class _AddBazaarScreenState extends State<AddBazaarScreen> {
                       final bool isEdited = data['isEdited'] == true;
                       final List itemList = (data['items'] is List) ? (data['items'] as List) : [];
 
-                      // 🌟 24-hour check: If created >= 24 hours ago, NO ONE can edit
+                      
                       DateTime? createdAt;
                       if (data['createdAt'] is Timestamp) {
                         createdAt = (data['createdAt'] as Timestamp).toDate();
@@ -489,7 +506,7 @@ class _AddBazaarScreenState extends State<AddBazaarScreen> {
                       final bool isExpired = createdAt != null && DateTime.now().difference(createdAt).inHours >= 24;
                       final bool canEdit = !isExpired && (_canManage || (!isApproved && data['userId'] == currentUid));
 
-                      // 🌟 Approved bazaar can NEVER be deleted until month close
+                      
                       final bool canDelete = !isApproved;
 
                       return Card(
@@ -609,7 +626,7 @@ class _AddBazaarScreenState extends State<AddBazaarScreen> {
                                           padding: const EdgeInsets.symmetric(horizontal: 4),
                                           icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent, size: 22),
                                           onPressed: () async {
-                                            // 🌟 Extra safety check: prevent deleting if approved
+                                            
                                             if (isApproved) {
                                               ScaffoldMessenger.of(context).showSnackBar(
                                                 const SnackBar(content: Text('Approved bazaar cannot be deleted until the month is closed!')),

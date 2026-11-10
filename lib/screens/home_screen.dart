@@ -97,8 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
-          // 🌟 Chat Icon with Unread Badge Count (Optimized with limit)
-          StreamBuilder<QuerySnapshot>(
+                    StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('messes')
                 .doc(widget.messId)
@@ -167,6 +166,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   final List<dynamic> readBy = data['readBy'] is List ? List<dynamic>.from(data['readBy']) : [];
                   final List<dynamic> clearedBy = data['clearedBy'] is List ? List<dynamic>.from(data['clearedBy']) : [];
                   if (currentUid != null && !clearedBy.contains(currentUid) && !readBy.contains(currentUid)) {
+                    final String? targetUid = data['targetUid']?.toString();
+                    if (targetUid != null && targetUid.isNotEmpty && targetUid != currentUid) {
+                      continue;
+                    }
+                    final String? targetRole = data['targetRole']?.toString().toLowerCase();
+                    if (targetRole != null && targetRole.isNotEmpty) {
+                      final role = AutoNotificationService.currentUserRole ?? 'member';
+                      if (targetRole == 'manager' && !(role == 'manager' || role == 'admin')) {
+                        continue;
+                      }
+                      if (targetRole == 'admin' && role != 'admin') {
+                        continue;
+                      }
+                    }
                     unread++;
                   }
                 }
@@ -176,7 +189,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.notifications_none_rounded, size: 24),
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationsScreen(messId: widget.messId))),
+                    onPressed: () {
+                      final role = AutoNotificationService.currentUserRole ?? 'member';
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NotificationsScreen(
+                            messId: widget.messId,
+                            isAdmin: role == 'admin',
+                            isManager: role == 'manager',
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   if (unread > 0)
                     Positioned(
@@ -369,66 +394,178 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildTopMessCard(String messName, bool isAdmin, bool isManager, String inviteCode) {
     final String roleName = isAdmin ? 'ADMIN' : (isManager ? 'MANAGER' : 'MEMBER');
+    final IconData roleIcon = isAdmin
+        ? Icons.admin_panel_settings_rounded
+        : (isManager ? Icons.manage_accounts_rounded : Icons.person_rounded);
+    final Color roleColor = isAdmin
+        ? const Color(0xFFFFD54F)
+        : (isManager ? const Color(0xFF81D4FA) : const Color(0xFFA5D6A7));
+
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: const Color(0xFF1B5E20), borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0F3815), Color(0xFF1B5E20), Color(0xFF2E7D32)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1B5E20).withValues(alpha: 0.28),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Stack(
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
-                child: const Icon(Icons.home_work_rounded, color: Colors.white, size: 24),
+          Positioned(
+            right: -20,
+            top: -20,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.05),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(messName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        const Text('Logged in as: ', style: TextStyle(color: Colors.green, fontSize: 12)).tr(),
-                        Text(roleName, style: TextStyle(color: Colors.green.shade100, fontSize: 12, fontWeight: FontWeight.bold)),
-                      ],
+                    Container(
+                      padding: const EdgeInsets.all(11),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.16),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                      ),
+                      child: const Icon(Icons.home_work_rounded, color: Colors.white, size: 26),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            messName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 19,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.25),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: roleColor.withValues(alpha: 0.45)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(roleIcon, size: 13, color: roleColor),
+                                const SizedBox(width: 5),
+                                Text(
+                                  roleName,
+                                  style: TextStyle(
+                                    color: roleColor,
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 0.8,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          InkWell(
-            onTap: () {
-              Clipboard.setData(ClipboardData(text: inviteCode));
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: const Text('Invite Code copied to clipboard!').tr()));
-              }
-            },
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-              decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.white24)),
-              child: Row(
-                children: [
-                  const Icon(Icons.vpn_key_rounded, color: Colors.white70, size: 16),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        const Text('Invite Code: ', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)).tr(),
-                        Text(inviteCode, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)),
-                      ],
+                const SizedBox(height: 16),
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: inviteCode));
+                      HapticFeedback.lightImpact();
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text('Invite Code copied to clipboard!').tr(),
+                            behavior: SnackBarBehavior.floating,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.22),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.vpn_key_rounded, color: Colors.white70, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                const Text(
+                                  'Invite Code: ',
+                                  style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w500, fontSize: 12.5),
+                                ).tr(),
+                                Flexible(
+                                  child: Text(
+                                    inviteCode,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              children: [
+                                const Text('Copy', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)).tr(),
+                                const SizedBox(width: 4),
+                                const Icon(Icons.copy_rounded, color: Colors.white, size: 12),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const Text('Tap to Copy', style: TextStyle(color: Colors.white60, fontSize: 11)).tr(),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.copy_rounded, color: Colors.white70, size: 14),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -437,8 +574,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildLiveMealRateCard() {
-    final now = DateTime.now();
-    final String currentMonthKey = "${now.year}-${now.month.toString().padLeft(2, '0')}";
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -466,8 +602,8 @@ class _HomeScreenState extends State<HomeScreen> {
           stream: FirebaseFirestore.instance
               .collection('messes')
               .doc(widget.messId)
-              .collection('meals')
-              .snapshots(),
+          .collection('meals')
+          .snapshots(),
           builder: (context, mealSnapshot) {
             double totalMeals = 0.0;
             if (mealSnapshot.hasData) {
@@ -485,35 +621,77 @@ class _HomeScreenState extends State<HomeScreen> {
             final double mealRate = totalMeals > 0 ? totalBazaar / totalMeals : 0.0;
 
             return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(color: const Color(0xFFE8F5E9), borderRadius: BorderRadius.circular(12)),
-                    child: const Icon(Icons.trending_up_rounded, color: Color(0xFF1B5E20), size: 22),
+                    padding: const EdgeInsets.all(11),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1B5E20).withValues(alpha: isDark ? 0.2 : 0.1),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(Icons.trending_up_rounded, color: Color(0xFF2E7D32), size: 24),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Expanded(
-                    flex: 3,
+                    flex: 4,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Live Meal Rate', style: TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w500)).tr(),
-                        const SizedBox(height: 2),
+                        Row(
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              margin: const EdgeInsets.only(right: 5),
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF2E7D32),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            Text(
+                              'Live Meal Rate'.tr(),
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
                         Text(
                           isLiveRateLoading ? '...' : '৳ ${mealRate.toStringAsFixed(2)}',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF1B5E20)),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 20,
+                            letterSpacing: -0.5,
+                            color: Color(0xFF1B5E20),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  Container(height: 32, width: 1, color: Theme.of(context).dividerColor, margin: const EdgeInsets.symmetric(horizontal: 8)),
+                  Container(
+                    height: 38,
+                    width: 1,
+                    color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.grey.shade200,
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                  ),
                   Expanded(
                     flex: 4,
                     child: Column(
@@ -522,21 +700,35 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Text('Total Bazaar: ', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)).tr(),
+                            Text(
+                              'Bazaar: '.tr(),
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                             Text(
                               isLiveRateLoading ? '...' : '৳${totalBazaar.toStringAsFixed(0)}',
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 3),
+                        const SizedBox(height: 4),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Text('Total Meals: ', style: TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w500)).tr(),
                             Text(
-                              isLiveRateLoading ? '...' : '${totalMeals.toStringAsFixed(1)}',
-                              style: const TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w500),
+                              'Meals: '.tr(),
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              isLiveRateLoading ? '...' : totalMeals.toStringAsFixed(1),
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
@@ -552,27 +744,72 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildOperationCard({required IconData icon, required String title, required String subtitle, required Color iconColor, required Color bgColor, required VoidCallback onTap}) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Theme.of(context).dividerColor),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(radius: 18, backgroundColor: bgColor, child: Icon(icon, color: iconColor, size: 20)),
-            const SizedBox(height: 8),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
-            const SizedBox(height: 2),
-            Text(subtitle, style: const TextStyle(fontSize: 11, color: Colors.grey), maxLines: 1, overflow: TextOverflow.ellipsis),
-          ],
+  Widget _buildOperationCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color iconColor,
+    required Color bgColor,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(9),
+                decoration: BoxDecoration(
+                  color: isDark ? iconColor.withValues(alpha: 0.15) : bgColor,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: iconColor, size: 21),
+              ),
+              const Spacer(),
+              Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13.5, letterSpacing: -0.2),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                  fontWeight: FontWeight.w400,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );

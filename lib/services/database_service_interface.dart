@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class DatabaseServiceInterface {
-  // মেস তৈরি ও জয়েন
+  
   Future<String> createMess({required String messName, required String creatorUid});
   Future<bool> joinMess({required String messCode, required String userUid});
 
-  // বাজার এন্ট্রি, এডিট ও স্ট্যাটাস
+  
   Future<void> addBazaarBatch({
     required String messId,
     required String userUid,
@@ -31,7 +31,7 @@ abstract class DatabaseServiceInterface {
 
   Stream<List<Map<String, dynamic>>> getBazaarList(String messId);
 
-  // চ্যাট সংক্রান্ত
+  
   Future<void> sendChatMessage({
     required String messId,
     required String senderUid,
@@ -56,7 +56,7 @@ abstract class DatabaseServiceInterface {
 
   Stream<List<Map<String, dynamic>>> getMessages(String messId);
 
-  // মিল সংক্রান্ত
+  
   Future<void> updateMemberMeal({
     required String messId,
     required String userUid,
@@ -69,7 +69,7 @@ abstract class DatabaseServiceInterface {
 
   Stream<List<Map<String, dynamic>>> getMonthlyMeals(String messId);
 
-  // ফিক্সড খরচ ও কাস্টম বাড়িভাড়া
+  
   Future<void> setIndividualRent({
     required String messId,
     required String userUid,
@@ -87,7 +87,7 @@ abstract class DatabaseServiceInterface {
 
   Stream<DocumentSnapshot> getMessUtilities(String messId);
 
-  // পেমেন্ট সংক্রান্ত
+  
   Future<void> savePaymentDetails({
     required String messId,
     required String paymentType,
@@ -110,7 +110,7 @@ abstract class DatabaseServiceInterface {
   Stream<DocumentSnapshot> getPaymentConfig(String messId);
   Stream<List<Map<String, dynamic>>> getPendingPayments(String messId);
 
-  // মাস ক্লোজ এবং ইতিহাস সংরক্ষণ
+  
   Future<void> closeCurrentMonthAndArchive({
     required String messId,
     required String monthYearName,
@@ -119,14 +119,14 @@ abstract class DatabaseServiceInterface {
 
   Stream<List<Map<String, dynamic>>> getMonthHistory(String messId);
 
-  // ম্যানেজার পরিবর্তন
+  
   Future<void> transferManagerRole({
     required String messId,
     required String currentManagerUid,
     required String newManagerUid,
   });
 
-  // নোটিফিকেশন
+  
   Future<void> sendInAppNotification({
     required String messId,
     required String title,

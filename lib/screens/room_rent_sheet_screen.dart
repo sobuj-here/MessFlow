@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auto_notification_service.dart';
 
 class RoomRentSheetScreen extends StatefulWidget {
   final String messId;
@@ -293,6 +295,15 @@ class _RoomRentSheetScreenState extends State<RoomRentSheetScreen> {
                   'month': currentMonthName,
                   'createdAt': FieldValue.serverTimestamp(),
                 });
+
+                final currentUid = FirebaseAuth.instance.currentUser?.uid;
+                await AutoNotificationService.sendNotification(
+                  messId: widget.messId,
+                  title: '🏢 Monthly Utility Bill Added',
+                  body: '৳$amount added for $title ($currentMonthName).',
+                  type: 'rent',
+                  senderUid: currentUid,
+                );
               }
               if (ctx.mounted) Navigator.pop(ctx);
             },
@@ -634,7 +645,7 @@ class _RoomRentSheetScreenState extends State<RoomRentSheetScreen> {
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(width: 4), // 🌟 এখানে নেগেটিভ উইডথ ফিক্স করা হয়েছে
+                        const SizedBox(width: 4),
                                     Text(
                                       'Tk ${totalPayable.toStringAsFixed(0)}',
                                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),

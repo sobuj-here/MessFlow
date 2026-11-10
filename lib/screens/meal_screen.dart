@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auto_notification_service.dart';
 
 class MealScreen extends StatefulWidget {
   final String messId;
-  final bool isManager; // Admin ও Manager উভয়ের ক্ষেত্রে true
+  final bool isManager;
 
   const MealScreen({
     super.key,
@@ -63,7 +64,7 @@ class _MealScreenState extends State<MealScreen> {
     });
   }
 
-  // মিল আপডেট করার ফাংশন (শুধু Admin ও Manager অনুমতি পাবেন)
+  
   Future<void> _updateMeal(String memberId, double newCount, {String? memberName}) async {
     if (!widget.isManager) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -82,6 +83,8 @@ class _MealScreenState extends State<MealScreen> {
 
     if (newCount == 0) {
       await docRef.delete();
+      
+      return;
     } else {
       await docRef.set({
         'date': _formattedDate,
@@ -92,6 +95,20 @@ class _MealScreenState extends State<MealScreen> {
         'updatedAt': FieldValue.serverTimestamp(),
       });
     }
+
+    
+    final currentUid = FirebaseAuth.instance.currentUser?.uid;
+    final name = (memberName != null && memberName.isNotEmpty) ? memberName : 'Member';
+    final mealCountFormatted = (newCount % 1 == 0) ? newCount.toInt().toString() : newCount.toString();
+
+    await AutoNotificationService.sendNotification(
+      messId: widget.messId,
+      title: '🍲 Meal Entry: $name',
+      body: '$name, your meal for $_formattedDate has been recorded: $mealCountFormatted meal(s).',
+      type: 'meal',
+      senderUid: currentUid,
+      targetUid: memberId,
+    );
   }
 
   @override
@@ -108,7 +125,7 @@ class _MealScreenState extends State<MealScreen> {
       ),
       body: Column(
         children: [
-          // তারিখ সিলেকশন বার
+          
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -170,7 +187,7 @@ class _MealScreenState extends State<MealScreen> {
             ),
           ),
 
-          // মোট মিল ও সদস্য তালিকা
+          
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -212,7 +229,7 @@ class _MealScreenState extends State<MealScreen> {
                     return ListView(
                       padding: const EdgeInsets.all(16.0),
                       children: [
-                        // মোট মিল সামারি কার্ড
+                        
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
                           decoration: BoxDecoration(
@@ -277,7 +294,7 @@ class _MealScreenState extends State<MealScreen> {
                         ),
                         const SizedBox(height: 10),
 
-                        // মেম্বারদের কার্ড
+                        
                         ListView.separated(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -319,7 +336,7 @@ class _MealScreenState extends State<MealScreen> {
                                           ),
                                         ),
 
-                                        // ম্যানেজার/অ্যাডমিনের জন্য সক্রিয় কন্ট্রোলার, মেম্বারের জন্য লকড
+                                        
                                         if (widget.isManager)
                                           Row(
                                             children: [
@@ -374,7 +391,7 @@ class _MealScreenState extends State<MealScreen> {
                                       ],
                                     ),
 
-                                    // Quick Select অপশন শুধু Admin/Manager-দের দেখাবে
+                                    
                                     if (widget.isManager) ...[
                                       const SizedBox(height: 10),
                                       const Divider(height: 1),
@@ -394,13 +411,13 @@ class _MealScreenState extends State<MealScreen> {
                                                   child: Container(
                                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                                     decoration: BoxDecoration(
-                                                      color: isSelected ? const Color(0xFF1B5E20) : Colors.grey.shade100,
+                                                      color: isSelected ? const Color(0xFF1B5E20) : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade100),
                                                       borderRadius: BorderRadius.circular(8),
                                                     ),
                                                     child: Text(
                                                       quickVal.toInt().toString(),
                                                       style: TextStyle(
-                                                        color: isSelected ? Colors.white : Colors.black87,
+                                                        color: isSelected ? Colors.white : (isDark ? Colors.white70 : Colors.black87),
                                                         fontWeight: FontWeight.bold,
                                                         fontSize: 12,
                                                       ),

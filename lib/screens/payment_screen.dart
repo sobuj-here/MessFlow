@@ -34,7 +34,7 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
 
   final List<String> _mfsList = ['bKash', 'Nagad', 'Rocket', 'Upay', 'Bank Transfer'];
 
-  // 🌟 ডাবল-ক্লিক ও ডুপ্লিকেট পেমেন্ট ট্র্যাকিং গার্ড
+  
   bool _isSubmittingPayment = false;
   final Set<String> _processingPaymentIds = {};
 
@@ -288,7 +288,7 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
                       final amount = double.tryParse(cashAmountCtrl.text.trim()) ?? 0.0;
                       if (amount == 0 || selectedMemberId == null) return;
 
-                      // 🌟 ডাবল-ক্লিক সুরক্ষা
+                      
                       setDialogState(() => isSavingCash = true);
 
                       try {
@@ -678,7 +678,7 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
                                   setState(() => _processingPaymentIds.add(pDoc.id));
 
                                   try {
-                                    // 🌟 ডাবল ক্লিক প্রতিরোধ: ইতিমধ্যে অনুমোদিত কিনা রিচেক করা
+                                    
                                     final freshSnap = await pDoc.reference.get();
                                     final freshData = freshSnap.data() as Map<String, dynamic>?;
                                     if (freshSnap.exists && freshData?['status'] == 'approved') {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart'; // 🌟 সময় ফরম্যাট করার জন্য
+import 'package:intl/intl.dart';
 import 'add_bazaar_screen.dart';
 import 'payment_screen.dart';
 import 'meal_chart_screen.dart';
@@ -71,7 +71,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  // 🌟 একক নোটিফিকেশন ডিলিট করার ফাংশন
+  
   Future<void> _deleteNotification(String docId) async {
     if (currentUid == null) return;
     try {
@@ -112,7 +112,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  // 🌟 সমস্ত নোটিফিকেশন একবারে ক্লিয়ার বা ডিলিট করার ফাংশন
+  
   Future<void> _clearAllNotifications(List<QueryDocumentSnapshot> docs) async {
     if (docs.isEmpty || currentUid == null) return;
 
@@ -178,7 +178,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
-  // সঠিক নোটিফিকেশন টাইপ অনুযায়ী নিখুঁত স্ক্রিন নেভিগেশন লজিক
+  
   void _navigateToScreen(String type) {
     Widget targetScreen;
 
@@ -228,7 +228,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
-          // 🌟 AppBar-এর ভেতরে সরাসরি 'Clear All' বাটন যুক্ত করা হলো
+          
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('messes')
@@ -240,7 +240,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               final docs = rawDocs.where((doc) {
                 final data = doc.data() as Map<String, dynamic>;
                 final List clearedBy = data['clearedBy'] ?? [];
-                return currentUid != null && !clearedBy.contains(currentUid);
+                if (currentUid == null || clearedBy.contains(currentUid)) return false;
+
+                final String? targetUid = data['targetUid']?.toString();
+                if (targetUid != null && targetUid.isNotEmpty && targetUid != currentUid) {
+                  return false;
+                }
+
+                final String? targetRole = data['targetRole']?.toString().toLowerCase();
+                if (targetRole != null && targetRole.isNotEmpty) {
+                  if (targetRole == 'manager' && !(widget.isManager || widget.isAdmin)) {
+                    return false;
+                  }
+                  if (targetRole == 'admin' && !widget.isAdmin) {
+                    return false;
+                  }
+                }
+                return true;
               }).toList();
               if (docs.isEmpty) return const SizedBox.shrink();
               return TextButton.icon(
@@ -270,7 +286,23 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           final docs = rawDocs.where((doc) {
             final data = doc.data() as Map<String, dynamic>;
             final List clearedBy = data['clearedBy'] ?? [];
-            return currentUid != null && !clearedBy.contains(currentUid);
+            if (currentUid == null || clearedBy.contains(currentUid)) return false;
+
+            final String? targetUid = data['targetUid']?.toString();
+            if (targetUid != null && targetUid.isNotEmpty && targetUid != currentUid) {
+              return false;
+            }
+
+            final String? targetRole = data['targetRole']?.toString().toLowerCase();
+            if (targetRole != null && targetRole.isNotEmpty) {
+              if (targetRole == 'manager' && !(widget.isManager || widget.isAdmin)) {
+                return false;
+              }
+              if (targetRole == 'admin' && !widget.isAdmin) {
+                return false;
+              }
+            }
+            return true;
           }).toList();
 
           if (docs.isEmpty) {
@@ -342,15 +374,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     final List readBy = data['readBy'] ?? [];
                     final bool isRead = readBy.contains(currentUid);
 
-                    // 🌟 নোটিফিকেশনের সময় ফরম্যাট করা (যেমন: 10:30 AM অথবা 25 Sep, 04:15 PM)
+                    
                     String timeFormatted = '';
                     if (createdAt != null) {
                       final DateTime dateTime = createdAt.toDate();
                       final now = DateTime.now();
                       if (dateTime.year == now.year && dateTime.month == now.month && dateTime.day == now.day) {
-                        timeFormatted = DateFormat('hh:mm a').format(dateTime); // আজকের হলে শুধু সময়
+                        timeFormatted = DateFormat('hh:mm a').format(dateTime);
                       } else {
-                        timeFormatted = DateFormat('dd MMM, hh:mm a').format(dateTime); // অন্যদিনের হলে তারিখ ও সময়
+                        timeFormatted = DateFormat('dd MMM, hh:mm a').format(dateTime);
                       }
                     }
 
@@ -445,7 +477,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                             ),
                                           ),
                                         ),
-                                        // 🌟 এখানে নোটিফিকেশনের সময় শো করছে
+                                        
                                         if (timeFormatted.isNotEmpty)
                                           Text(
                                             timeFormatted,

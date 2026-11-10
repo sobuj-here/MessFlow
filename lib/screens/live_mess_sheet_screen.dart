@@ -10,7 +10,7 @@ class MessHomeDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F8FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Mess Expense Sheet & Meal Chart',
@@ -23,16 +23,16 @@ class MessHomeDashboardScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // Upore pasapasi 2ti button (active / inactive style)
+          
           Container(
             padding: const EdgeInsets.all(12),
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             child: Row(
               children: [
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF107C41), // Active Mess Expense Button
+                      backgroundColor: const Color(0xFF107C41), 
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       elevation: 0,
@@ -46,8 +46,8 @@ class MessHomeDashboardScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey.shade200, // Inactive Meal Chart Button
-                      foregroundColor: Colors.black87,
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade200, 
+                      foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       elevation: 0,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -68,7 +68,7 @@ class MessHomeDashboardScreen extends StatelessWidget {
           ),
           const Divider(height: 1),
 
-          // Niche main Mess Expense Sheet table screen load hobe
+          
           Expanded(
             child: ExpenseSheetScreen(messId: messId),
           ),

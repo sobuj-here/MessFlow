@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'live_mess_sheet_screen.dart'; // MessHomeDashboardScreen-এর সঠিক রুট নিশ্চিত করার জন্য
+import 'live_mess_sheet_screen.dart';
 
 class AssignBazaarScreen extends StatefulWidget {
   final String messId;
@@ -335,12 +335,14 @@ class _AssignBazaarScreenState extends State<AssignBazaarScreen> {
 
                   final notifDoc = messRef.collection('notifications').doc();
                   batch.set(notifDoc, {
+                    'senderUid': currentUid ?? '',
                     'targetUid': selectedUid,
                     'title': '🛒 Bazaar Duty Assigned!',
                     'body': 'You have been assigned bazaar duty for $_dateStr. Please accept or report.',
                     'type': 'bazaar_duty',
                     'createdAt': FieldValue.serverTimestamp(),
                     'readBy': [],
+                    'clearedBy': [],
                   });
 
                   await batch.commit();
@@ -417,12 +419,14 @@ class _AssignBazaarScreenState extends State<AssignBazaarScreen> {
 
               final notifDoc = messRef.collection('notifications').doc();
               batch.set(notifDoc, {
+                'senderUid': currentUid ?? '',
                 'targetRole': 'manager',
                 'title': '⚠️ Bazaar Duty Problem!',
                 'body': 'Assigned member reported an issue for $_dateStr: "$reason"',
                 'type': 'bazaar_duty',
                 'createdAt': FieldValue.serverTimestamp(),
                 'readBy': [],
+                'clearedBy': [],
               });
 
               await batch.commit();

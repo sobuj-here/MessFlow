@@ -255,8 +255,7 @@ class _SharedExpenseScreenState extends State<SharedExpenseScreen> {
 
           return Column(
             children: [
-              // Total Expense Banner
-              Container(
+                            Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                 color: Colors.white,
                 child: Row(

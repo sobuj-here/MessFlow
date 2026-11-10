@@ -7,7 +7,7 @@ class AppStrings {
     return isBangla ? bn : en;
   }
 
-  // App & General
+  
   static String get appName => tr(en: 'MessFlow', bn: 'মেসফ্লো');
   static String get appSubtitle => tr(en: 'Smart Mess & Meal Management', bn: 'স্মার্ট মেস ও মিল ব্যবস্থাপনা');
   static String get cancel => tr(en: 'Cancel', bn: 'বাতিল');
@@ -15,12 +15,12 @@ class AppStrings {
   static String get submit => tr(en: 'Submit', bn: 'জমা দিন');
   static String get comingSoon => tr(en: 'Feature coming soon', bn: 'ফিচারটি শীঘ্রই আসছে');
 
-  // Roles
+  
   static String get roleAdmin => tr(en: 'Mess Admin', bn: 'মেস অ্যাডমিন');
   static String get roleManager => tr(en: 'Month Manager', bn: 'চলতি ম্যানেজার');
   static String get roleMember => tr(en: 'Mess Member', bn: 'মেস সদস্য');
 
-  // Home Screen
+  
   static String get liveMealRate => tr(en: 'Live Meal Rate', bn: 'বর্তমান মিল রেট');
   static String get totalMeals => tr(en: 'Total Meals', bn: 'মোট মিল');
   static String get totalBazaar => tr(en: 'Total Bazaar', bn: 'মোট বাজার');
@@ -31,7 +31,7 @@ class AppStrings {
   static String get notInMess => tr(en: 'You are not joined in any mess yet', bn: 'আপনি এখনো কোনো মেসে যুক্ত হননি');
   static String get notInMessSubtitle => tr(en: 'Ask your mess admin for an invite', bn: 'মেসে যুক্ত হতে মেস অ্যাডমিনের সাহায্য নিন');
 
-  // Menu Tiles
+  
   static String get bazaarTitle => tr(en: 'Bazaar Records', bn: 'বাজারের খরচ');
   static String get bazaarSubtitle => tr(en: 'Daily shopping and expenses', bn: 'দৈনিক বাজারের হিসাব');
   static String get mealTitle => tr(en: 'Daily Meals', bn: 'ডেইলি মিল');

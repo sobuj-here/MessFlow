@@ -13,7 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../main.dart'; // main.dart-এ ইনিশিয়ালাইজ করা flutterLocalNotificationsPlugin ব্যবহারের জন্য
+import '../services/auto_notification_service.dart';
 
 class GroupChatScreen extends StatefulWidget {
   final String messId;
@@ -36,7 +36,15 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
   @override
   void initState() {
     super.initState();
+    AutoNotificationService.isChatScreenActive = true;
     _markMessagesAsSeen();
+  }
+
+  @override
+  void dispose() {
+    AutoNotificationService.isChatScreenActive = false;
+    _messageController.dispose();
+    super.dispose();
   }
 
   Future<void> _markMessagesAsSeen() async {
@@ -216,28 +224,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
     }
   }
 
-  // 🌟 নতুন মেসেজ আসলে লোকাল নোটিফিকেশন ট্রিগার করার ফাংশন
-  Future<void> _showChatNotification(String senderName, String messageBody) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'mess_chat_channel', // main.dart এ ডিফাইন করা চ্যাট চ্যানেল আইডি
-      'Chat Messages',
-      channelDescription: 'Notifications for new group chat messages',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: true,
-    );
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-
-    await flutterLocalNotificationsPlugin.show(
-      DateTime.now().millisecond, // Unique ID
-      senderName,
-      messageBody.isNotEmpty ? messageBody : 'Sent an attachment',
-      platformChannelSpecifics,
-    );
-  }
 
   Future<void> _sendMessage({String? text, String? mediaUrl, String? mediaType, String? fileName}) async {
     final msg = text ?? _messageController.text.trim();

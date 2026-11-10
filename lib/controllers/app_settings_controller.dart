@@ -29,15 +29,12 @@ class AppSettingsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 🌟 ভাষা পরিবর্তনের সময় EasyLocalization-এর লোকাল্লে আপডেট করে দেওয়া হলো
   Future<void> changeLanguage(BuildContext context, String langCode) async {
     _language = langCode;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('app_language', langCode);
 
-    // EasyLocalization এর ভাষা ইনস্ট্যান্ট পরিবর্তন করার জন্য
     await context.setLocale(Locale(langCode));
-
     notifyListeners();
   }
 }

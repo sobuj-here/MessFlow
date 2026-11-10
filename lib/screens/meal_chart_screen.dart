@@ -36,7 +36,7 @@ class _FullMonthMealChartScreenState extends State<FullMonthMealChartScreen> {
 
   void _updateMonthVariables() {
     _currentMonthKey = "${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}";
-    _daysInMonth = DateTime(_selectedDate.year, _selectedDate.month + 1, 0).day; // 🌟 31 days or respective month days automatic
+    _daysInMonth = DateTime(_selectedDate.year, _selectedDate.month + 1, 0).day;
     _currentMonthName = "${_monthsList[_selectedDate.month - 1]} ${_selectedDate.year}";
   }
 
@@ -122,14 +122,14 @@ class _FullMonthMealChartScreenState extends State<FullMonthMealChartScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text('Daily Meal Chart - $_currentMonthName'), // 🌟 Auto Month Name in AppBar
+        title: Text('Daily Meal Chart - $_currentMonthName'),
         backgroundColor: const Color(0xFF1B5E20),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: Column(
         children: [
-          // 🌟 অটো মান্থ চেঞ্জার হেডার
+          
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             color: Theme.of(context).cardColor,
@@ -271,7 +271,7 @@ class _FullMonthMealChartScreenState extends State<FullMonthMealChartScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 12.0),
                             child: Card(
                               elevation: 2,
-                              color: Theme.of(context).cardColor, // 🌟 Dark mode adaptive card color
+                              color: Theme.of(context).cardColor,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.vertical,
