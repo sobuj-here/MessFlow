@@ -12,7 +12,7 @@
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.24+-02569B.svg?style=for-the-badge&logo=flutter&logoColor=white" alt="Flutter"></a>
   <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-3.5+-0175C2.svg?style=for-the-badge&logo=dart&logoColor=white" alt="Dart"></a>
   <a href="https://firebase.google.com"><img src="https://img.shields.io/badge/Firebase-Firestore-FFCA28.svg?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase"></a>
-  <a href="https://github.com/sobuj-here/MessFlow/releases"><img src="https://img.shields.io/badge/Release-v2.1.2-brightgreen.svg?style=for-the-badge&logo=android" alt="Release"></a>
+  <a href="https://github.com/sobuj-here/MessFlow/releases"><img src="https://img.shields.io/badge/Release-v2.1.3-brightgreen.svg?style=for-the-badge&logo=android" alt="Release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge" alt="License"></a>
 </p>
 
@@ -27,7 +27,7 @@
 Download the latest production release of **MessFlow** for Android:
 
 <p align="center">
-  <a href="https://github.com/sobuj-here/MessFlow/releases/download/v2.1.3/MessFlow-v2.1.2.apk">
+  <a href="https://github.com/sobuj-here/MessFlow/releases/download/v2.1.3/MessFlow-v2.1.3.apk">
     <img src="https://img.shields.io/badge/Download-MessFlow_v2.1.3_APK-brightgreen?style=for-the-badge&logo=android" alt="Download MessFlow APK">
   </a>
 </p>
