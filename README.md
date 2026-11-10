@@ -27,8 +27,8 @@
 Download the latest production release of **MessFlow** for Android:
 
 <p align="center">
-  <a href="https://github.com/sobuj-here/MessFlow/releases/download/v2.1.2/MessFlow-v2.1.2.apk">
-    <img src="https://img.shields.io/badge/Download-MessFlow_v2.1.2_APK-brightgreen?style=for-the-badge&logo=android" alt="Download MessFlow APK">
+  <a href="https://github.com/sobuj-here/MessFlow/releases/download/v2.1.3/MessFlow-v2.1.2.apk">
+    <img src="https://img.shields.io/badge/Download-MessFlow_v2.1.3_APK-brightgreen?style=for-the-badge&logo=android" alt="Download MessFlow APK">
   </a>
 </p>
 
