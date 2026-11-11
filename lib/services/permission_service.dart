@@ -18,6 +18,12 @@ class AppPermissionService {
         await Permission.notification.request();
 
         if (Platform.isAndroid) {
+          try {
+            if (await Permission.ignoreBatteryOptimizations.isDenied) {
+              await Permission.ignoreBatteryOptimizations.request();
+            }
+          } catch (_) {}
+
           await [
             Permission.camera,
             Permission.storage,

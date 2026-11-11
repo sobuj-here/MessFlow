@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:permission_handler/permission_handler.dart';
 import '../services/auto_notification_service.dart';
 import '../controllers/app_settings_controller.dart';
 import '../services/auth_service.dart';
@@ -1640,41 +1639,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       }
                     },
                   ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text('Notifications & Background Activity', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.grey)),
-              const SizedBox(height: 8),
-
-              Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: ListTile(
-                  leading: const Icon(Icons.battery_charging_full_rounded, color: Color(0xFF1B5E20)),
-                  title: const Text('Allow Background Notifications', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                  subtitle: const Text('Ensure notifications arrive even when app is closed (Disable Battery Restrictions / Enable Auto-start).', style: TextStyle(fontSize: 12)),
-                  trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                  onTap: () async {
-                    await openAppSettings();
-                  },
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: ListTile(
-                  leading: const Icon(Icons.notifications_active_rounded, color: Colors.teal),
-                  title: const Text('Test Notification Alert', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                  subtitle: const Text('Send a live test notification to verify sound, vibration, and heads-up banner.', style: TextStyle(fontSize: 12)),
-                  trailing: const Icon(Icons.send_rounded, size: 18, color: Colors.teal),
-                  onTap: () async {
-                    await AutoNotificationService.showTestNotification();
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Test notification sent to your status bar!')),
-                      );
-                    }
-                  },
                 ),
               ),
 
