@@ -9,21 +9,24 @@ class AppPermissionService {
   /// Checks and requests runtime notification and storage permissions.
   static Future<void> checkAndRequestInitialPermissions(BuildContext context) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final bool alreadyRequested = prefs.getBool(_kInitialPermissionKey) ?? false;
-
-      if (!alreadyRequested) {
-        await prefs.setBool(_kInitialPermissionKey, true);
-
+      final notifStatus = await Permission.notification.status;
+      if (!notifStatus.isGranted) {
         await Permission.notification.request();
+      }
 
+      if (Platform.isAndroid) {
+        try {
+          if (await Permission.ignoreBatteryOptimizations.isDenied) {
+            await Permission.ignoreBatteryOptimizations.request();
+          }
+        } catch (_) {}
+      }
+
+      final prefs = await SharedPreferences.getInstance();
+      final bool alreadyRequestedMedia = prefs.getBool(_kInitialPermissionKey) ?? false;
+      if (!alreadyRequestedMedia) {
+        await prefs.setBool(_kInitialPermissionKey, true);
         if (Platform.isAndroid) {
-          try {
-            if (await Permission.ignoreBatteryOptimizations.isDenied) {
-              await Permission.ignoreBatteryOptimizations.request();
-            }
-          } catch (_) {}
-
           await [
             Permission.camera,
             Permission.storage,

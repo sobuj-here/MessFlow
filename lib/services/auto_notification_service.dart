@@ -18,16 +18,13 @@ class AutoNotificationService {
   static String? _currentMessId;
   static String? currentUserRole;
 
-  
   static bool isChatScreenActive = false;
 
-  
   static final Set<String> _shownNotificationIds = {};
   static final Set<String> _shownChatIds = {};
   static bool _isFirstNotificationSnap = true;
   static bool _isFirstChatSnap = true;
 
-  
   static String? _lastSentSig;
   static int _lastSentTime = 0;
 
@@ -40,9 +37,7 @@ class AutoNotificationService {
 
     final currentUid = FirebaseAuth.instance.currentUser?.uid;
     final messRef = _db.collection('messes').doc(messId);
-    final DateTime sessionStartTime = DateTime.now();
 
-    
     try {
       FirebaseMessaging.instance.subscribeToTopic('mess_$messId');
       if (currentUid != null) {
@@ -50,7 +45,6 @@ class AutoNotificationService {
       }
     } catch (_) {}
 
-    
     if (currentUid != null) {
       messRef.collection('members').doc(currentUid).get().then((doc) {
         if (doc.exists) {
@@ -65,16 +59,39 @@ class AutoNotificationService {
       }).catchError((_) {});
     }
 
-    
     messRef
         .collection('notifications')
         .orderBy('createdAt', descending: true)
-        .limit(25)
+        .limit(30)
         .snapshots()
         .listen((snap) {
       if (_isFirstNotificationSnap) {
         _isFirstNotificationSnap = false;
+        final now = DateTime.now();
         for (var doc in snap.docs) {
+          final data = doc.data();
+          final List readBy = data['readBy'] ?? [];
+          final List clearedBy = data['clearedBy'] ?? [];
+          final String? targetUid = data['targetUid']?.toString();
+          final Timestamp? createdAt = data['createdAt'] as Timestamp?;
+
+          if (createdAt != null &&
+              now.difference(createdAt.toDate()).inHours < 24) {
+            bool isTargetedToMe = targetUid != null && targetUid.isNotEmpty && targetUid == currentUid;
+            if (isTargetedToMe &&
+                currentUid != null &&
+                !readBy.contains(currentUid) &&
+                !clearedBy.contains(currentUid) &&
+                !_shownNotificationIds.contains(doc.id)) {
+              _shownNotificationIds.add(doc.id);
+              _showLocalNotification(
+                title: data['title'] ?? 'MessFlow Notification',
+                body: data['body'] ?? '',
+                type: data['type'] ?? 'notice',
+                messId: messId,
+              );
+            }
+          }
           _shownNotificationIds.add(doc.id);
         }
         return;
@@ -89,33 +106,26 @@ class AutoNotificationService {
           final data = change.doc.data();
           if (data == null) continue;
 
-          final Timestamp? createdAt = data['createdAt'] as Timestamp?;
-          if (createdAt != null &&
-              createdAt.toDate().isBefore(sessionStartTime.subtract(const Duration(minutes: 1)))) {
-            continue;
-          }
-
           final List readBy = data['readBy'] ?? [];
+          final List clearedBy = data['clearedBy'] ?? [];
           final String senderUid = data['senderUid'] ?? '';
           final String? targetUid = data['targetUid']?.toString();
           final String? targetRole = data['targetRole']?.toString().toLowerCase();
 
-          
-          if (currentUid != null && senderUid.isNotEmpty && senderUid == currentUid) {
+          if (currentUid != null && (clearedBy.contains(currentUid) || readBy.contains(currentUid))) {
             continue;
           }
 
-          
-          if (currentUid != null && readBy.contains(currentUid)) {
-            continue;
+          if (targetUid != null && targetUid.isNotEmpty) {
+            if (targetUid != currentUid) {
+              continue;
+            }
+          } else {
+            if (currentUid != null && senderUid.isNotEmpty && senderUid == currentUid) {
+              continue;
+            }
           }
 
-          
-          if (targetUid != null && targetUid.isNotEmpty && targetUid != currentUid) {
-            continue;
-          }
-
-          
           if (targetRole != null && targetRole.isNotEmpty) {
             final role = currentUserRole ?? 'member';
             if (targetRole == 'manager' && !(role == 'manager' || role == 'admin')) {
@@ -136,7 +146,6 @@ class AutoNotificationService {
       }
     });
 
-    
     messRef
         .collection('group_chats')
         .orderBy('timestamp', descending: true)
@@ -160,14 +169,7 @@ class AutoNotificationService {
           final data = change.doc.data();
           if (data == null) continue;
 
-          
           if (isChatScreenActive) {
-            continue;
-          }
-
-          final Timestamp? timestamp = data['timestamp'] as Timestamp?;
-          if (timestamp != null &&
-              timestamp.toDate().isBefore(sessionStartTime.subtract(const Duration(minutes: 1)))) {
             continue;
           }
 
@@ -192,7 +194,6 @@ class AutoNotificationService {
     });
   }
 
-  
   static Future<void> sendNotification({
     required String messId,
     required String title,
@@ -226,13 +227,12 @@ class AutoNotificationService {
         'targetUid': targetUid,
         'targetRole': targetRole,
         'createdAt': FieldValue.serverTimestamp(),
-        'readBy': uid != null ? [uid] : [],
+        'readBy': [],
         'clearedBy': [],
       });
     } catch (_) {}
   }
 
-  
   static Future<void> _showLocalNotification({
     required String title,
     required String body,
@@ -291,7 +291,6 @@ class AutoNotificationService {
     } catch (_) {}
   }
 
-  
   static void handleNotificationTap(String messId, String type, NavigatorState? navigator) {
     if (navigator == null || messId.isEmpty) return;
 
@@ -313,14 +312,5 @@ class AutoNotificationService {
     }
 
     navigator.push(MaterialPageRoute(builder: (_) => targetScreen));
-  }
-
-  
-  static Future<void> showTestNotification() async {
-    await _showLocalNotification(
-      title: '🔔 MessFlow Test Notification',
-      body: 'Your notification and alert system is working properly.',
-      type: 'notice',
-    );
   }
 }

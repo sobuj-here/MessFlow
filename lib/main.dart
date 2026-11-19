@@ -16,7 +16,51 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 // Background FCM message handler
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+    final data = message.data;
+    final notification = message.notification;
+    final title = notification?.title ?? data['title'] ?? 'MessFlow Alert';
+    final body = notification?.body ?? data['body'] ?? '';
+
+    if (title.isNotEmpty || body.isNotEmpty) {
+      final plugin = FlutterLocalNotificationsPlugin();
+      const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+      await plugin.initialize(const InitializationSettings(android: androidInit));
+
+      final type = data['type']?.toString() ?? 'notice';
+      String channelId = 'mess_notice_channel';
+      String channelName = 'Mess Notices';
+      if (type.contains('chat')) {
+        channelId = 'mess_chat_channel';
+        channelName = 'Chat Messages';
+      } else if (type.contains('meal')) {
+        channelId = 'mess_meal_channel';
+        channelName = 'Meal Updates';
+      } else if (type.contains('payment') || type.contains('bazaar')) {
+        channelId = 'mess_payment_channel';
+        channelName = 'Payments & Bazaar';
+      }
+
+      await plugin.show(
+        DateTime.now().millisecondsSinceEpoch.remainder(100000),
+        title,
+        body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            channelId,
+            channelName,
+            importance: Importance.max,
+            priority: Priority.high,
+            showWhen: true,
+            enableVibration: true,
+            playSound: true,
+            icon: '@mipmap/ic_launcher',
+          ),
+        ),
+      );
+    }
+  } catch (_) {}
 }
 
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -64,49 +108,49 @@ Future<void> setupNotificationChannels() async {
     'mess_notice_channel', 
     'Mess Notices', 
     description: 'Important notices from admin',
-    importance: Importance.high,
+    importance: Importance.max,
   );
 
   const AndroidNotificationChannel mealChannel = AndroidNotificationChannel(
     'mess_meal_channel',
     'Meal Updates',
     description: 'Daily meal entry updates',
-    importance: Importance.high,
+    importance: Importance.max,
   );
 
   const AndroidNotificationChannel paymentChannel = AndroidNotificationChannel(
     'mess_payment_channel',
     'Payments & Bazaar',
     description: 'Bazaar and payment notifications',
-    importance: Importance.high,
+    importance: Importance.max,
   );
 
   const AndroidNotificationChannel chatChannel = AndroidNotificationChannel(
     'mess_chat_channel',
     'Chat Messages',
     description: 'Notifications for new group chat messages',
-    importance: Importance.high,
+    importance: Importance.max,
   );
 
   const AndroidNotificationChannel assignChannel = AndroidNotificationChannel(
     'mess_assign_channel',
     'Bazaar Assign & Duties',
     description: 'Notifications for bazaar duties and assignments',
-    importance: Importance.high,
+    importance: Importance.max,
   );
 
   const AndroidNotificationChannel rentChannel = AndroidNotificationChannel(
     'mess_rent_channel',
     'Room Rent & Utilities',
     description: 'Room rent sheet and monthly bills updates',
-    importance: Importance.high,
+    importance: Importance.max,
   );
 
   const AndroidNotificationChannel approvalChannel = AndroidNotificationChannel(
     'mess_approval_channel',
     'Account Approvals',
     description: 'Notifications for join requests and approvals',
-    importance: Importance.high,
+    importance: Importance.max,
   );
 
   final androidPlugin = flutterLocalNotificationsPlugin

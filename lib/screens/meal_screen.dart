@@ -101,6 +101,17 @@ class _MealScreenState extends State<MealScreen> {
     final name = (memberName != null && memberName.isNotEmpty) ? memberName : 'Member';
     final mealCountFormatted = (newCount % 1 == 0) ? newCount.toInt().toString() : newCount.toString();
 
+    if (mounted) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Meal updated for ' + name + ': ' + mealCountFormatted + ' meal(s)'),
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+
     await AutoNotificationService.sendNotification(
       messId: widget.messId,
       title: '🍲 Meal Entry: $name',
