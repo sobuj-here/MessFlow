@@ -28,7 +28,7 @@ dependencies:
   qr_flutter: ^4.1.0
 
   http: ^1.2.0
-  file_picker: ^8.1.7
+  file_picker: ^11.0.3
 
   # PDF & File Management Packages (Dio & Permission Handler Included)
   pdf: ^3.10.4
