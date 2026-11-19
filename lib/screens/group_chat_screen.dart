@@ -330,11 +330,11 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         if (mounted) setState(() => _isUploading = false);
       }
     } else if (type == 'document') {
-      FilePickerResult? result = await FilePicker.pickFiles(type: FileType.any);
-      if (result == null || result.files.single.path == null) return;
+      final files = await FilePicker.pickFiles(type: FileType.any);
+      if (files.isEmpty || files.first.path == null) return;
 
-      originalFileName = result.files.single.name;
-      io.File fileObj = io.File(result.files.single.path!);
+      originalFileName = files.first.name;
+      io.File fileObj = io.File(files.first.path!);
 
       setState(() => _isUploading = true);
       try {
